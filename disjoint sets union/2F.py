@@ -5,8 +5,6 @@ class DisjointSetUnion:
     def __init__(self, n):
         self.parent = [*range(n+1)]
         self.size = [1]*(n+1)
-        self.min, self.max = [*range(n+1)], [*range(n+1)]
-        self.count = n
 
     def get(self, a):
         """Returns the identifier (parent) of the set to which a belongs to!"""
@@ -27,31 +25,40 @@ class DisjointSetUnion:
                 a, b = b, a
             self.parent[a] = b
             self.size[b] += self.size[a]
-            self.min[b] = min(self.min[a], self.min[b])
-            self.max[b] = max(self.max[a], self.max[b])
-            self.count -= 1
 
-    def count_sets(self):
-        """Returns the number of disjoint sets!"""
-        return self.count
 
 import sys
 input = sys.stdin.readline
 
 n, m = map(int, input().split())
-dsu = DisjointSetUnion(n)
-di = {}
+y = []
 for _ in range(m):
     b, e, w = map(int, input().split())
-    if w not in di:
-        di[w] = []
-    di[w] += [[b, e]]
+    y += [[w, b, e]]
 
-x = sorted([k for k in di])
-ans = 0
-for i in x:
-    for p, q in di[i]:
-        if dsu.get(p) != dsu.get(q):
-            dsu.union(p, q)
-            ans += i
-print(ans)
+y = sorted(y, key=lambda x: x[0])
+ans = 10**18
+found = False
+for i in range(len(y)):
+    dsu = DisjointSetUnion(n)
+    cnt = 0
+    m1 = 10**18
+    m2 = -10**18
+    for j in range(i, len(y)):
+        p, q, r = y[j]
+        if dsu.get(q) != dsu.get(r):
+            dsu.union(q, r)
+            cnt += 1
+            m1 = min(m1, p)
+            m2 = max(m2, p)
+            if cnt == n-1:break
+    if cnt == n-1:
+        found = True
+        ans = min(ans, m2-m1)
+    else:break
+
+if not found:
+    print("NO")
+else:
+    print("YES")
+    print(ans)
