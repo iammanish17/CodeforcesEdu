@@ -110,7 +110,6 @@ class LazySegmentTree:
         return res
 
     def update(self, alpha, omega, value):
-        """Increases all elements in the range (inclusive) by given value!"""
         alpha += self.size
         omega += self.size + 1
         for i in reversed(range(1, alpha.bit_length())):
